@@ -26,7 +26,9 @@ check_sudo() {
 
 check_installed "sudo"
 check_sudo
+check_installed "virsh"
 check_installed "virt-install"
+check_installed "m4"
 
 if [ "$ALLGOOD" = "0" ]; then
 	echo "problems were found. please correct them!"
