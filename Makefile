@@ -15,8 +15,9 @@ tmp:
 	mkdir -p tmp
 
 # Prepare Debian preseed file.
-tmp/debian-%.cfg: preseed/debian-%.cfg.m4
+tmp/debian-%.cfg: preseed/debian.cfg.m4
 	m4 \
+		-DSUITE="$(VM_DEBIAN_SUITE)" \
 		-DLOCALE="$(VM_DEFAULT_LOCALE)" \
 		-DCOUNTRY="$(VM_DEBIAN_COUNTRY)" \
 		-DKEYMAP="$(VM_DEBIAN_KEYBOARD)" \
