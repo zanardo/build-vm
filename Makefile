@@ -1,11 +1,11 @@
 SRC ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-include $(SRC)/defaults.mk
+$(info checking needed tools)
+REQUIRED_TOOLS := sudo virsh virt-install m4
+$(foreach tool,$(REQUIRED_TOOLS),\
+	$(if $(shell command -v $(tool) 2>/dev/null),,$(error please install `$(tool)`)))
 
-.PHONY: check
-.SILENT: check
-check:
-	$(SRC)check.sh
+include $(SRC)/defaults.mk
 
 MIRROR ?= cdn-fastly.deb.debian.org
 NAME ?= debian9
@@ -18,7 +18,7 @@ LOCALE ?= en_US.UTF-8
 KEYMAP ?= br
 INTERFACE ?= ens3
 IP ?= 192.168.3.100
-debian: check
+debian:
 	@OS="debian" \
 	NAME="$(NAME)" \
 	RELEASE="$(RELEASE)" \
