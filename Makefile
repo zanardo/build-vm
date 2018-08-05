@@ -27,6 +27,7 @@ tmp/debian-%.cfg: preseed/debian-%.cfg.m4
 debian: clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 	sudo virt-install \
 		--connect qemu:///system \
+		--noautoconsole \
 		--name "$(NAME)" \
 		--wait "-1" \
 		--graphics "vnc" \
