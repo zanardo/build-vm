@@ -1,3 +1,51 @@
 .PHONY: check
 check:
 	@./check.sh
+
+CPU ?= core2duo
+NUMCPUS ?= 2
+MEMORY ?= 1024
+BRIDGE ?= kvm0
+
+MIRROR ?= cdn-fastly.deb.debian.org
+NAME ?= debian9
+RELEASE ?= stretch
+DISKPATH ?= /srv/kvm
+DISKFILE ?= $(NAME).qcow2
+DISKSIZE ?= 10
+CACHEMODE ?= unsafe
+COUNTRY ?= "BR"
+LOCALE ?= en_US.UTF-8
+KEYMAP ?= br
+TIMEZONE ?= America/Sao_Paulo
+INTERFACE ?= ens3
+IP ?= 192.168.3.100
+NETMASK ?= 255.255.255.0
+GATEWAY ?= 192.168.3.1
+DNSPRIMARY ?= 192.168.3.2
+DNSDOMAIN ?= local
+debian:
+	@OS="debian" \
+	NAME="$(NAME)" \
+	RELEASE="$(RELEASE)" \
+	DISKPATH="$(DISKPATH)" \
+	DISKFILE="$(DISKFILE)" \
+	DISKSIZE="$(DISKSIZE)" \
+	CACHEMODE="$(CACHEMODE)" \
+	CPU="$(CPU)" \
+	NUMCPUS="$(NUMCPUS)" \
+	MEMORY="$(MEMORY)" \
+	BRIDGE="$(BRIDGE)" \
+	MIRROR="$(MIRROR)" \
+	LOCALE="$(LOCALE)" \
+	COUNTRY="$(COUNTRY)" \
+	KEYMAP="$(KEYMAP)" \
+	TIMEZONE="$(TIMEZONE)" \
+	INTERFACE="$(INTERFACE)" \
+	IP="$(IP)" \
+	NETMASK="$(NETMASK)" \
+	GATEWAY="$(GATEWAY)" \
+	DNSPRIMARY="$(DNSPRIMARY)" \
+	DNSDOMAIN="$(DNSDOMAIN)" \
+	./build.sh
+
