@@ -10,37 +10,55 @@ include $(SRC)/defaults-debian.mk
 NAME ?= debian9
 IP ?= 192.168.3.100
 DISKPATH ?= /srv/kvm
-
 DISKFILE ?= $(NAME).qcow2
-
 DISKSIZE ?= 10
 
-debian:
-	@OS="debian" \
-	NAME="$(NAME)" \
-	RELEASE="$(VM_DEBIAN_SUITE)" \
-	DISKPATH="$(DISKPATH)" \
-	DISKFILE="$(DISKFILE)" \
-	DISKSIZE="$(DISKSIZE)" \
-	CACHEMODE="$(VM_DISK_CACHE_MODE)" \
-	CPU="$(VM_CPU_MODEL)" \
-	NUMCPUS="$(VM_NUM_CPUS)" \
-	MEMORY="$(VM_RAM)" \
-	BRIDGE="$(VM_HOST_BRIDGE)" \
-	MIRROR="$(VM_DEBIAN_MIRROR)" \
-	LOCALE="$(VM_DEFAULT_LOCALE)" \
-	COUNTRY="$(VM_DEBIAN_COUNTRY)" \
-	KEYMAP="$(VM_DEBIAN_KEYBOARD)" \
-	TIMEZONE="$(VM_TIMEZONE)" \
-	INTERFACE="$(VM_DEBIAN_INTERFACE)" \
-	IP="$(IP)" \
-	NETMASK="$(VM_NETMASK_IPV4)" \
-	GATEWAY="$(VM_GATEWAY_IPV4)" \
-	DNSPRIMARY="$(VM_DNS_IPV4)" \
-	DNSDOMAIN="$(VM_DNS_DOMAIN)" \
-	./build.sh
+tmp:
+	mkdir -p $(SRC)/tmp
+
+# Prepare Debian preseed file.
+$(SRC)/tmp/debian-%.cfg: $(SRC)/preseed/debian-%.cfg.m4
+	m4 \
+		-DLOCALE="$(VM_DEFAULT_LOCALE)" \
+		-DCOUNTRY="$(VM_DEBIAN_COUNTRY)" \
+		-DKEYMAP="$(VM_DEBIAN_KEYBOARD)" \
+		-DMIRROR="$(VM_DEBIAN_MIRROR)" \
+		-DTIMEZONE="$(VM_TIMEZONE)" \
+	< $< > $@
+
+debian: clean tmp $(SRC)/tmp/debian-$(VM_DEBIAN_SUITE).cfg
+	sudo virt-install \
+		--connect qemu:///system \
+		--name "$(NAME)" \
+		--wait "-1" \
+		--graphics "vnc" \
+		--cpu "$(VM_CPU_MODEL)" \
+		--vcpus "$(VM_NUM_CPUS)" \
+		--memory "$(VM_RAM)" \
+		--clock offset=utc \
+		--network "bridge=$(VM_HOST_BRIDGE),model=virtio" \
+		--os-variant "debianwheezy" \
+		--disk "$(DISKPATH)/$(DISKFILE),size=$(DISKSIZE),bus=virtio,format=qcow2,cache=$(VM_DISK_CACHE_MODE)" \
+		--location "http://$(VM_DEBIAN_MIRROR)/debian/dists/$(VM_DEBIAN_SUITE)/main/installer-amd64/" \
+		--initrd-inject="$(SRC)/tmp/debian-$(VM_DEBIAN_SUITE).cfg" \
+		--extra-args " \
+			quiet \
+			hostname=${NAME} \
+			preseed/file=/debian-$(VM_DEBIAN_SUITE).cfg \
+			debian-installer/locale=$(VM_DEFAULT_LOCALE) \
+			debian-installer/language=en \
+			debian-installer/country=$(VM_DEBIAN_COUNTRY) \
+			keyboard-configuration/xkb-keymap=$(VM_DEBIAN_KEYBOARD) \
+			interface=$(VM_DEBIAN_INTERFACE) \
+			netcfg/disable_autoconfig=true \
+			netcfg/get_ipaddress=${IP} \
+			netcfg/get_netmask=$(VM_NETMASK_IPV4) \
+			netcfg/get_gateway=$(VM_GATEWAY_IPV4) \
+			netcfg/get_nameservers=$(VM_DNS_IPV4) \
+			netcfg/get_domain=$(VM_DNS_DOMAIN) \
+			netcfg/confirm_static=true \
+		"
 
 .PHONY: clean
-.SILENT: clean
 clean:
 	rm -rf $(SRC)/tmp/
