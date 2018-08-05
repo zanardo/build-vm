@@ -18,7 +18,7 @@ LOCALE ?= en_US.UTF-8
 KEYMAP ?= br
 INTERFACE ?= ens3
 IP ?= 192.168.3.100
-debian:
+debian: check
 	@OS="debian" \
 	NAME="$(NAME)" \
 	RELEASE="$(RELEASE)" \
