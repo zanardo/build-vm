@@ -45,3 +45,6 @@ VM_DNS_DOMAIN ?= local
 
 # Timezone for the VM.
 VM_TIMEZONE ?= America/Sao_Paulo
+
+# Default locale to use inside VM.
+VM_DEFAULT_LOCALE ?= en_US.UTF-8
