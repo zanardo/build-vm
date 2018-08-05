@@ -1,6 +1,5 @@
 SRC ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-$(info checking if necessary tools are installed)
 REQUIRED_TOOLS := sudo virsh virt-install m4
 $(foreach tool,$(REQUIRED_TOOLS),\
 	$(if $(shell command -v $(tool) 2>/dev/null),,$(error please install `$(tool)`)))
@@ -41,3 +40,7 @@ debian:
 	DNSDOMAIN="$(VM_DNS_DOMAIN)" \
 	./build.sh
 
+.PHONY: clean
+.SILENT: clean
+clean:
+	rm -rf $(SRC)/tmp/
