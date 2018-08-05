@@ -1,11 +1,9 @@
-SRC ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-
 REQUIRED_TOOLS := sudo virsh virt-install m4
 $(foreach tool,$(REQUIRED_TOOLS),\
 	$(if $(shell command -v $(tool) 2>/dev/null),,$(error tool not found: `$(tool)`)))
 
-include $(SRC)/defaults.mk
-include $(SRC)/defaults-debian.mk
+include defaults.mk
+include defaults-debian.mk
 
 NAME ?= debian9
 IP ?= 192.168.3.100
@@ -14,10 +12,10 @@ DISKFILE ?= $(NAME).qcow2
 DISKSIZE ?= 10
 
 tmp:
-	mkdir -p $(SRC)/tmp
+	mkdir -p tmp
 
 # Prepare Debian preseed file.
-$(SRC)/tmp/debian-%.cfg: $(SRC)/preseed/debian-%.cfg.m4
+tmp/debian-%.cfg: preseed/debian-%.cfg.m4
 	m4 \
 		-DLOCALE="$(VM_DEFAULT_LOCALE)" \
 		-DCOUNTRY="$(VM_DEBIAN_COUNTRY)" \
@@ -26,7 +24,7 @@ $(SRC)/tmp/debian-%.cfg: $(SRC)/preseed/debian-%.cfg.m4
 		-DTIMEZONE="$(VM_TIMEZONE)" \
 	< $< > $@
 
-debian: clean tmp $(SRC)/tmp/debian-$(VM_DEBIAN_SUITE).cfg
+debian: clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 	sudo virt-install \
 		--connect qemu:///system \
 		--name "$(NAME)" \
@@ -40,7 +38,7 @@ debian: clean tmp $(SRC)/tmp/debian-$(VM_DEBIAN_SUITE).cfg
 		--os-variant "debianwheezy" \
 		--disk "$(DISKPATH)/$(DISKFILE),size=$(DISKSIZE),bus=virtio,format=qcow2,cache=$(VM_DISK_CACHE_MODE)" \
 		--location "http://$(VM_DEBIAN_MIRROR)/debian/dists/$(VM_DEBIAN_SUITE)/main/installer-amd64/" \
-		--initrd-inject="$(SRC)/tmp/debian-$(VM_DEBIAN_SUITE).cfg" \
+		--initrd-inject="tmp/debian-$(VM_DEBIAN_SUITE).cfg" \
 		--extra-args " \
 			quiet \
 			hostname=${NAME} \
@@ -61,4 +59,4 @@ debian: clean tmp $(SRC)/tmp/debian-$(VM_DEBIAN_SUITE).cfg
 
 .PHONY: clean
 clean:
-	rm -rf $(SRC)/tmp/
+	rm -rf tmp/
