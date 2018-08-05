@@ -2,7 +2,7 @@ SRC ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 REQUIRED_TOOLS := sudo virsh virt-install m4
 $(foreach tool,$(REQUIRED_TOOLS),\
-	$(if $(shell command -v $(tool) 2>/dev/null),,$(error please install `$(tool)`)))
+	$(if $(shell command -v $(tool) 2>/dev/null),,$(error tool not found: `$(tool)`)))
 
 include $(SRC)/defaults.mk
 include $(SRC)/defaults-debian.mk
