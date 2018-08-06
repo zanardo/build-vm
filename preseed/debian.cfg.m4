@@ -6,9 +6,15 @@ d-i keyboard-configuration/xkb-keymap select KEYMAP
 d-i mirror/country string br
 d-i mirror/http/hostname string MIRROR
 d-i mirror/http/directory string /debian
-d-i apt-setup/services-select multiselect security, updates
-d-i apt-setup/security_host string MIRROR
 d-i mirror/http/proxy string
+
+ifelse(SUITE, `stretch',`
+d-i apt-setup/security_host string MIRROR
+d-i apt-setup/security_path string /debian-security
+d-i apt-setup/services-select multiselect security, updates
+d-i mirror/suite string SUITE
+d-i mirror/udeb/suite string SUITE
+')
 
 d-i partman-auto/disk string /dev/vda
 d-i partman-auto/method string regular
