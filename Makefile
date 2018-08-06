@@ -11,6 +11,8 @@ DISKPATH ?= /srv/kvm
 DISKFILE ?= $(NAME).qcow2
 DISKSIZE ?= 10
 
+.DEFAULT_GOAL := debian
+
 tmp:
 	mkdir -p tmp
 
