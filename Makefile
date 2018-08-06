@@ -5,14 +5,14 @@ $(foreach tool,$(REQUIRED_TOOLS),\
 include defaults.mk
 include defaults-debian.mk
 
-NAME ?=
-IP ?=
-DISKPATH ?=
-DISKFILE ?= $(NAME).qcow2
-DISKSIZE ?= 10
+VM_NAME ?=
+VM_ADDRESS_IPV4 ?=
+VM_STORAGE_DIR ?=
+VM_STORAGE_FILE ?= $(VM_NAME).qcow2
+VM_STORAGE_SIZE ?= 10
 
 # Check if obrigatory variables are defined.
-REQUIRED_VARS := NAME IP DISKPATH
+REQUIRED_VARS := VM_NAME VM_ADDRESS_IPV4 VM_STORAGE_DIR
 $(foreach var,$(REQUIRED_VARS), \
 	$(if $($(var)),, \
 		$(error $(var) not defined!)))
@@ -37,7 +37,7 @@ debian: clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 	sudo virt-install \
 		--connect qemu:///system \
 		--noautoconsole \
-		--name "$(NAME)" \
+		--name "$(VM_NAME)" \
 		--wait "-1" \
 		--graphics "vnc" \
 		--cpu "$(VM_CPU_MODEL)" \
@@ -46,12 +46,12 @@ debian: clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 		--clock offset=utc \
 		--network "bridge=$(VM_HOST_BRIDGE),model=virtio" \
 		--os-variant "debianwheezy" \
-		--disk "$(DISKPATH)/$(DISKFILE),size=$(DISKSIZE),bus=virtio,format=qcow2,cache=$(VM_DISK_CACHE_MODE)" \
+		--disk "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE),size=$(VM_STORAGE_SIZE),bus=virtio,format=qcow2,cache=$(VM_DISK_CACHE_MODE)" \
 		--location "http://$(VM_DEBIAN_MIRROR)/debian/dists/$(VM_DEBIAN_SUITE)/main/installer-amd64/" \
 		--initrd-inject="tmp/debian-$(VM_DEBIAN_SUITE).cfg" \
 		--extra-args " \
 			quiet \
-			hostname=${NAME} \
+			hostname=${VM_NAME} \
 			preseed/file=/debian-$(VM_DEBIAN_SUITE).cfg \
 			debian-installer/locale=$(VM_DEFAULT_LOCALE) \
 			debian-installer/language=en \
@@ -59,7 +59,7 @@ debian: clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 			keyboard-configuration/xkb-keymap=$(VM_DEBIAN_KEYBOARD) \
 			interface=$(VM_DEBIAN_INTERFACE) \
 			netcfg/disable_autoconfig=true \
-			netcfg/get_ipaddress=${IP} \
+			netcfg/get_ipaddress=${VM_ADDRESS_IPV4} \
 			netcfg/get_netmask=$(VM_NETMASK_IPV4) \
 			netcfg/get_gateway=$(VM_GATEWAY_IPV4) \
 			netcfg/get_nameservers=$(VM_DNS_IPV4) \
