@@ -1,7 +1,3 @@
-REQUIRED_TOOLS := sudo virsh virt-install m4
-$(foreach tool,$(REQUIRED_TOOLS),\
-	$(if $(shell command -v $(tool) 2>/dev/null),,$(error tool not found: `$(tool)`)))
-
 include defaults.mk
 include defaults-debian.mk
 
