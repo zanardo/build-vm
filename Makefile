@@ -5,11 +5,17 @@ $(foreach tool,$(REQUIRED_TOOLS),\
 include defaults.mk
 include defaults-debian.mk
 
-NAME ?= debian9
-IP ?= 192.168.3.100
-DISKPATH ?= /srv/kvm
+NAME ?=
+IP ?=
+DISKPATH ?=
 DISKFILE ?= $(NAME).qcow2
 DISKSIZE ?= 10
+
+# Check if obrigatory variables are defined.
+REQUIRED_VARS := NAME IP DISKPATH
+$(foreach var,$(REQUIRED_VARS), \
+	$(if $($(var)),, \
+		$(error $(var) not defined!)))
 
 .DEFAULT_GOAL := debian
 
