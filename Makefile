@@ -33,6 +33,7 @@ tmp/debian-%.cfg: preseed/debian.cfg.m4
 		-DTIMEZONE="$(VM_TIMEZONE)" \
 	< $< > $@
 
+.PHONY: debian
 debian: clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 	sudo virt-install \
 		--connect qemu:///system \
