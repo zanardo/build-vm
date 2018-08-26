@@ -74,9 +74,10 @@ debian: check-vm-build-vars format-disk clean tmp tmp/debian-$(VM_DEBIAN_SUITE).
 			netcfg/confirm_static=true \
 		"
 	# Remove SSH host keys.
-	-ssh-keygen -R $(VM_NAME)
-	-ssh-keygen -R $(VM_ADDRESS_IPV4)
-	-ssh-keyscan $(VM_ADDRESS_IPV4) >> ~/.ssh/known_hosts
+	ssh-keygen -R $(VM_NAME)
+	ssh-keygen -R $(VM_ADDRESS_IPV4)
+	sleep 15
+	ssh-keyscan $(VM_ADDRESS_IPV4) >> ~/.ssh/known_hosts
 
 .PHONY: clean
 clean:
