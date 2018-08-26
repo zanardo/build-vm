@@ -31,6 +31,7 @@ tmp/debian-%.cfg: preseed/debian.cfg.m4
 
 .PHONY: debian
 debian: clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
+	sudo qemu-img create -f qcow2 -o preallocation=off $(VM_STORAGE_DIR)/$(VM_STORAGE_FILE) $(VM_STORAGE_SIZE)G
 	sudo virt-install \
 		--connect qemu:///system \
 		--noautoconsole \
@@ -43,7 +44,7 @@ debian: clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 		--clock offset=utc \
 		--network "bridge=$(VM_HOST_BRIDGE),model=virtio" \
 		--os-variant "debianwheezy" \
-		--disk "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE),size=$(VM_STORAGE_SIZE),bus=virtio,format=qcow2,cache=$(VM_DISK_CACHE_MODE)" \
+		--disk "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE),bus=virtio,format=qcow2,cache=$(VM_DISK_CACHE_MODE),discard=unmap" \
 		--location "http://$(VM_DEBIAN_MIRROR)/debian/dists/$(VM_DEBIAN_SUITE)/main/installer-amd64/" \
 		--initrd-inject="tmp/debian-$(VM_DEBIAN_SUITE).cfg" \
 		--extra-args " \
