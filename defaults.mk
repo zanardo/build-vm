@@ -64,3 +64,6 @@ VM_TIMEZONE ?= America/Sao_Paulo
 
 # Default locale to use inside VM.
 VM_DEFAULT_LOCALE ?= en_US.UTF-8
+
+# SSH public key to inject into VM's root user.
+VM_SSH_ADMIN_KEY ?= "`cat ~/.ssh/id_rsa.pub`"

@@ -15,6 +15,7 @@ tmp/debian-%.cfg: preseed/debian.cfg.m4
 		-DKEYMAP="$(VM_DEBIAN_KEYBOARD)" \
 		-DMIRROR="$(VM_DEBIAN_MIRROR)" \
 		-DTIMEZONE="$(VM_TIMEZONE)" \
+		-DSSH_ADMIN_KEY=$(VM_SSH_ADMIN_KEY) \
 	< $< > $@
 
 # Check if obrigatory variables are defined.
@@ -68,6 +69,9 @@ debian: check-vm-build-vars format-disk clean tmp tmp/debian-$(VM_DEBIAN_SUITE).
 			netcfg/get_domain=$(VM_DNS_DOMAIN) \
 			netcfg/confirm_static=true \
 		"
+	# Remove SSH host keys.
+	-ssh-keygen -R $(VM_NAME)
+	-ssh-keygen -R $(VM_ADDRESS_IPV4)
 
 .PHONY: clean
 clean:

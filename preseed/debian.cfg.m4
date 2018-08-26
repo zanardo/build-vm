@@ -49,4 +49,6 @@ d-i preseed/late_command string echo ; \
 	in-target update-grub ; \
 	touch /target/reboot-me ; \
 	echo "PermitRootLogin yes" >> /target/etc/ssh/sshd_config ; \
-	echo "UseDNS no" >> /target/etc/ssh/sshd_config ;
+	echo "UseDNS no" >> /target/etc/ssh/sshd_config ; \
+	mkdir -p /target/root/.ssh ; \
+	echo 'SSH_ADMIN_KEY' > /target/root/.ssh/authorized_keys ;
