@@ -1,12 +1,6 @@
 include defaults.mk
 include defaults-debian.mk
 
-VM_NAME ?=
-VM_ADDRESS_IPV4 ?=
-VM_STORAGE_DIR ?=
-VM_STORAGE_FILE ?= $(VM_NAME).qcow2
-VM_STORAGE_SIZE ?= 20
-
 .DEFAULT_GOAL := debian
 
 tmp:

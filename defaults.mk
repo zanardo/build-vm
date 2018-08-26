@@ -4,6 +4,10 @@
 # Ex:
 # make debian VM_RAM=2048 VM_NUM_CPUS=4
 
+## Basic
+
+VM_NAME ?=
+
 ## Resources
 
 # Baseline processor model. Easier when migrating VMs to other physical
@@ -18,6 +22,15 @@ VM_RAM ?= 1024
 
 ## Storage
 
+# Storage dir.
+VM_STORAGE_DIR ?= /var/lib/libvirt/images
+
+# VM storage file.
+VM_STORAGE_FILE ?= $(VM_NAME).qcow2
+
+# VM storage size in GB.
+VM_STORAGE_SIZE ?= 20
+
 # Cache mode to VM's disk. Can be none, unsafe, writeback, writethrough, etc.
 # We use unsafe as default, because it makes installation much faster, and
 # this project aims to build VMs templates.
@@ -27,6 +40,9 @@ VM_DISK_CACHE_MODE ?= unsafe
 
 # Bridge to attach VM network interface.
 VM_HOST_BRIDGE ?= kvm0
+
+# VM IP address.
+VM_ADDRESS_IPV4 ?=
 
 # Netmask for the VM. Must be the same of the bridge defined in VM_HOST_BRIDGE.
 VM_NETMASK_IPV4 ?= 255.255.255.0
