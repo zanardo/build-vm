@@ -73,11 +73,18 @@ debian: check-vm-build-vars format-disk clean tmp tmp/debian-$(VM_DEBIAN_SUITE).
 			netcfg/get_domain=$(VM_DNS_DOMAIN) \
 			netcfg/confirm_static=true \
 		"
-	# Remove SSH host keys.
+	# Remove previous SSH host keys.
 	ssh-keygen -R $(VM_NAME)
 	ssh-keygen -R $(VM_ADDRESS_IPV4)
-	sleep 15
+	# Wait for VM to go up.
+	until timeout 1s ssh -o StrictHostKeyChecking=false $(VM_ADDRESS_IPV4) true; do sleep 1; done
+	# Scan host SSH keys.
 	ssh-keyscan $(VM_ADDRESS_IPV4) >> ~/.ssh/known_hosts
+	# Shut down VM.
+	virsh --connect qemu:///system shutdown $(VM_NAME)
+	while :; do STATE="$$(virsh --connect qemu:///system domstate $(VM_NAME) | head -n1)"; if [ "$$STATE" = "shut off" ]; then break; else sleep 1; fi; done
+	# Create a VM snapshot.
+	virsh --connect qemu:///system snapshot-create $(VM_NAME)
 
 .PHONY: clean
 clean:
