@@ -24,9 +24,17 @@ check-vm-build-vars:
 	@test -n "$(VM_ADDRESS_IPV4)" || (echo "ERROR: missing VM_ADDRESS_IPV4 variable!" && exit 1)
 	@test -n "$(VM_STORAGE_DIR)" || (echo "ERROR: missing VM_STORAGE_DIR variable!" && exit 1)
 
+# Create the VM storage disk.
+.PHONY: format-disk
+format-disk: check-vm-build-vars
+	sudo qemu-img create \
+		-f qcow2 \
+		-o preallocation=off \
+		"$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE)" \
+		"$(VM_STORAGE_SIZE)G"
+
 .PHONY: debian
-debian: check-vm-build-vars clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
-	sudo qemu-img create -f qcow2 -o preallocation=off "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE)" "$(VM_STORAGE_SIZE)G"
+debian: check-vm-build-vars format-disk clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 	sudo virt-install \
 		--connect qemu:///system \
 		--noautoconsole \
