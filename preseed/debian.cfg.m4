@@ -16,7 +16,7 @@ d-i mirror/suite string SUITE
 d-i mirror/udeb/suite string SUITE
 ')
 
-d-i partman-auto/disk string /dev/vda
+d-i partman-auto/disk string /dev/sda
 d-i partman-auto/method string regular
 d-i partman-auto/choose_recipe select atomic
 d-i partman-partitioning/confirm_write_new_label boolean true
@@ -39,7 +39,7 @@ d-i pkgsel/include string sudo, python, bash-completion, qemu-guest-agent
 d-i pkgsel/install-language-support boolean false
 d-i grub-installer/only_debian boolean true
 d-i grub-installer/with_other_os boolean true
-d-i grub-installer/bootdev string /dev/vda
+d-i grub-installer/bootdev string /dev/sda
 
 d-i debian-installer/add-kernel-opts string console=ttyS0,115200n8 serial
 d-i finish-install/reboot_in_progress note
