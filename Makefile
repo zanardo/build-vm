@@ -39,7 +39,7 @@ debian: check-vm-build-vars clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 		--clock offset=utc \
 		--network "bridge=$(VM_HOST_BRIDGE),model=virtio" \
 		--os-variant "debianwheezy" \
-		--disk "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE),bus=virtio,format=raw,cache=$(VM_DISK_CACHE_MODE),format=qcow2,discard=unmap" \
+		--disk "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE),bus=virtio,format=qcow2,cache=$(VM_DISK_CACHE_MODE),discard=unmap" \
 		--location "http://$(VM_DEBIAN_MIRROR)/debian/dists/$(VM_DEBIAN_SUITE)/main/installer-amd64/" \
 		--initrd-inject="tmp/debian-$(VM_DEBIAN_SUITE).cfg" \
 		--extra-args " \
