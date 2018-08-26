@@ -35,7 +35,7 @@ d-i clock-setup/ntp boolean true
 popularity-contest popularity-contest/participate boolean false
 
 tasksel tasksel/first multiselect ssh-server
-d-i pkgsel/include string sudo, python, bash-completion
+d-i pkgsel/include string sudo, python, bash-completion, qemu-guest-agent
 d-i pkgsel/install-language-support boolean false
 d-i grub-installer/only_debian boolean true
 d-i grub-installer/with_other_os boolean true
