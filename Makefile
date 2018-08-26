@@ -48,6 +48,7 @@ debian: check-vm-build-vars format-disk clean tmp tmp/debian-$(VM_DEBIAN_SUITE).
 		--clock offset=utc \
 		--network "bridge=$(VM_HOST_BRIDGE),model=virtio" \
 		--os-variant "debianwheezy" \
+		--channel unix,mode=bind,target_type=virtio,name=org.qemu.guest_agent.0 \
 		--controller scsi,model=virtio-scsi \
 		--disk "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE),bus=scsi,format=qcow2,cache=$(VM_DISK_CACHE_MODE),discard=unmap" \
 		--location "http://$(VM_DEBIAN_MIRROR)/debian/dists/$(VM_DEBIAN_SUITE)/main/installer-amd64/" \
