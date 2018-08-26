@@ -28,6 +28,9 @@ check-vm-build-vars:
 # Create the VM storage disk.
 .PHONY: format-disk
 format-disk: check-vm-build-vars
+	@test ! -f "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE)" || (\
+		echo "ERROR: $(VM_STORAGE_DIR)/$(VM_STORAGE_FILE) already exists!" ; \
+		exit 1)
 	sudo qemu-img create \
 		-f qcow2 \
 		-o preallocation=off \
