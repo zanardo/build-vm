@@ -5,13 +5,7 @@ VM_NAME ?=
 VM_ADDRESS_IPV4 ?=
 VM_STORAGE_DIR ?=
 VM_STORAGE_FILE ?= $(VM_NAME).qcow2
-VM_STORAGE_SIZE ?= 10
-
-# Check if obrigatory variables are defined.
-REQUIRED_VARS := VM_NAME VM_ADDRESS_IPV4 VM_STORAGE_DIR
-$(foreach var,$(REQUIRED_VARS), \
-	$(if $($(var)),, \
-		$(error $(var) not defined!)))
+VM_STORAGE_SIZE ?= 20
 
 .DEFAULT_GOAL := debian
 
@@ -29,9 +23,16 @@ tmp/debian-%.cfg: preseed/debian.cfg.m4
 		-DTIMEZONE="$(VM_TIMEZONE)" \
 	< $< > $@
 
+# Check if obrigatory variables are defined.
+.PHONY: check-vm-build-vars
+check-vm-build-vars:
+	@test -n "$(VM_NAME)" || (echo "ERROR: missing VM_NAME variable!" && exit 1)
+	@test -n "$(VM_ADDRESS_IPV4)" || (echo "ERROR: missing VM_ADDRESS_IPV4 variable!" && exit 1)
+	@test -n "$(VM_STORAGE_DIR)" || (echo "ERROR: missing VM_STORAGE_DIR variable!" && exit 1)
+
 .PHONY: debian
-debian: clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
-	sudo qemu-img create -f qcow2 -o preallocation=off $(VM_STORAGE_DIR)/$(VM_STORAGE_FILE) $(VM_STORAGE_SIZE)G
+debian: check-vm-build-vars clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
+	sudo qemu-img create -f qcow2 -o preallocation=off "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE)" "$(VM_STORAGE_SIZE)G"
 	sudo virt-install \
 		--connect qemu:///system \
 		--noautoconsole \
@@ -44,7 +45,7 @@ debian: clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 		--clock offset=utc \
 		--network "bridge=$(VM_HOST_BRIDGE),model=virtio" \
 		--os-variant "debianwheezy" \
-		--disk "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE),bus=virtio,format=qcow2,cache=$(VM_DISK_CACHE_MODE),discard=unmap" \
+		--disk "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE),bus=virtio,format=raw,cache=$(VM_DISK_CACHE_MODE),format=qcow2,discard=unmap" \
 		--location "http://$(VM_DEBIAN_MIRROR)/debian/dists/$(VM_DEBIAN_SUITE)/main/installer-amd64/" \
 		--initrd-inject="tmp/debian-$(VM_DEBIAN_SUITE).cfg" \
 		--extra-args " \
