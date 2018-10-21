@@ -25,20 +25,8 @@ check-vm-build-vars:
 	@test -n "$(VM_ADDRESS_IPV4)" || (echo "ERROR: missing VM_ADDRESS_IPV4 variable!" && exit 1)
 	@test -n "$(VM_STORAGE_DIR)" || (echo "ERROR: missing VM_STORAGE_DIR variable!" && exit 1)
 
-# Create the VM storage disk.
-.PHONY: format-disk
-format-disk: check-vm-build-vars
-	@test ! -f "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE)" || (\
-		echo "ERROR: $(VM_STORAGE_DIR)/$(VM_STORAGE_FILE) already exists!" ; \
-		exit 1)
-	sudo qemu-img create \
-		-f qcow2 \
-		-o preallocation=off \
-		"$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE)" \
-		"$(VM_STORAGE_SIZE)G"
-
 .PHONY: debian
-debian: check-vm-build-vars format-disk clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
+debian: check-vm-build-vars clean tmp tmp/debian-$(VM_DEBIAN_SUITE).cfg
 	sudo virt-install \
 		--connect qemu:///system \
 		--noautoconsole \
@@ -53,7 +41,7 @@ debian: check-vm-build-vars format-disk clean tmp tmp/debian-$(VM_DEBIAN_SUITE).
 		--os-variant "debianwheezy" \
 		--channel unix,mode=bind,target_type=virtio,name=org.qemu.guest_agent.0 \
 		--controller scsi,model=virtio-scsi \
-		--disk "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE),bus=scsi,format=qcow2,cache=$(VM_DISK_CACHE_MODE),discard=unmap" \
+		--disk "$(VM_STORAGE_DIR)/$(VM_STORAGE_FILE),bus=scsi,format=qcow2,cache=$(VM_DISK_CACHE_MODE),discard=unmap,size=$(VM_STORAGE_SIZE)" \
 		--location "http://$(VM_DEBIAN_MIRROR)/debian/dists/$(VM_DEBIAN_SUITE)/main/installer-amd64/" \
 		--initrd-inject="tmp/debian-$(VM_DEBIAN_SUITE).cfg" \
 		--extra-args " \
