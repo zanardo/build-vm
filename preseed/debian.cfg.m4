@@ -17,8 +17,41 @@ d-i mirror/udeb/suite string SUITE
 ')
 
 d-i partman-auto/disk string /dev/sda
-d-i partman-auto/method string regular
-d-i partman-auto/choose_recipe select atomic
+d-i partman-auto/method string lvm
+d-i partman-auto/expert_recipe string                         \
+      boot-root ::                                            \
+              512 512 512 ext2                                \
+                      $primary{ }                             \
+                      $bootable{ }                            \
+                      method{ format } format{ }              \
+                      use_filesystem{ } filesystem{ ext2 }    \
+                      mountpoint{ /boot }                     \
+              .                                               \
+              512 512 512 linux-swap                          \
+                      $lvmok{ }                               \
+                      lv_name{ swap }                         \
+                      method{ swap } format{ }                \
+              .                                               \
+              10000 10000 10000 xfs                           \
+                      $lvmok{ }                               \
+                      method{ format } format{ }              \
+                      use_filesystem{ } filesystem{ xfs }     \
+                      mountpoint{ / }                         \
+              .                                               \
+              512 10 -1 ext4                                  \
+                      $defaultignore $lvmok{ }                \
+                      lv_name{ deleteme }                     \
+                      method{ lvm }                           \
+              .
+d-i partman-lvm/confirm boolean true
+d-i partman/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-lvm/device_remove_lvm_span boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
+d-i partman-auto/purge_lvm_from_device boolean true
+d-i partman-auto-lvm/new_vg_name string vg0
 d-i partman-partitioning/confirm_write_new_label boolean true
 d-i partman/choose_partition select finish
 d-i partman/confirm boolean true
