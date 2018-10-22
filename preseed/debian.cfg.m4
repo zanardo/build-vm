@@ -20,28 +20,38 @@ d-i partman-auto/disk string /dev/sda
 d-i partman-auto/method string lvm
 d-i partman-auto/expert_recipe string                         \
       boot-root ::                                            \
-              512 512 512 ext2                                \
+              1 512 512 ext2                                  \
                       $primary{ }                             \
                       $bootable{ }                            \
                       method{ format } format{ }              \
                       use_filesystem{ } filesystem{ ext2 }    \
                       mountpoint{ /boot }                     \
               .                                               \
-              512 512 512 linux-swap                          \
+              2 10000 -1 vg                                   \
+                      $defaultignore{ }                       \
+                      $primary{ }                             \
+                      method{ lvm }                           \
+                      device{ /dev/sda }                      \
+                      vg_name{ vg0 }                          \
+              .                                               \
+              3 512 512 swap                                  \
                       $lvmok{ }                               \
                       lv_name{ swap }                         \
+                      in_vg{ vg0 }                            \
                       method{ swap } format{ }                \
-              .                                               \
-              10000 10000 10000 xfs                           \
+                      .                                       \
+              3 10000 10000 xfs                               \
                       $lvmok{ }                               \
+                      lv_name{ root }                         \
+                      in_vg{ vg0 }                            \
                       method{ format } format{ }              \
                       use_filesystem{ } filesystem{ xfs }     \
                       mountpoint{ / }                         \
               .                                               \
-              512 10 -1 ext4                                  \
-                      $defaultignore $lvmok{ }                \
+              4 10 -1 ext4                                    \
+                      $lvmok{ }                               \
                       lv_name{ deleteme }                     \
-                      method{ lvm }                           \
+                      in_vg{ vg0 }                            \
               .
 d-i partman-lvm/confirm boolean true
 d-i partman/confirm_write_new_label boolean true
@@ -52,6 +62,7 @@ d-i partman-lvm/device_remove_lvm_span boolean true
 d-i partman-lvm/confirm_nooverwrite boolean true
 d-i partman-auto/purge_lvm_from_device boolean true
 d-i partman-auto-lvm/new_vg_name string vg0
+d-i partman-auto/choose_recipe select boot-root
 d-i partman-partitioning/confirm_write_new_label boolean true
 d-i partman/choose_partition select finish
 d-i partman/confirm boolean true
