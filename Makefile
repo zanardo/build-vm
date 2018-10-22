@@ -17,6 +17,7 @@ tmp/debian-%.cfg: preseed/debian.cfg.m4
 		-DTIMEZONE="$(VM_TIMEZONE)" \
 		-DROOTLVSIZE="$(VM_LVM_ROOT_SIZE)" \
 		-DSWAPLVSIZE="$(VM_LVM_SWAP_SIZE)" \
+		-DROOTFSTYPE="$(VM_LVM_ROOT_FSTYPE)" \
 		-DSSH_ADMIN_KEY=$(VM_SSH_ADMIN_KEY) \
 	< $< > $@
 

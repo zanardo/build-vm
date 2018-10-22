@@ -42,6 +42,9 @@ VM_LVM_ROOT_SIZE ?= 10000
 # Default LV size for swap.
 VM_LVM_SWAP_SIZE ?= 512
 
+# Default filesystem for root.
+VM_LVM_ROOT_FSTYPE ?= ext4
+
 ## Basic network
 
 # Bridge to attach VM network interface.
