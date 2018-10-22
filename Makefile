@@ -15,6 +15,8 @@ tmp/debian-%.cfg: preseed/debian.cfg.m4
 		-DKEYMAP="$(VM_DEBIAN_KEYBOARD)" \
 		-DMIRROR="$(VM_DEBIAN_MIRROR)" \
 		-DTIMEZONE="$(VM_TIMEZONE)" \
+		-DROOTLVSIZE="$(VM_DEBIAN_LVM_ROOT_SIZE)" \
+		-DSWAPLVSIZE="$(VM_DEBIAN_LVM_SWAP_SIZE)" \
 		-DSSH_ADMIN_KEY=$(VM_SSH_ADMIN_KEY) \
 	< $< > $@
 

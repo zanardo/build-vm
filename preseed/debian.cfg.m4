@@ -34,13 +34,13 @@ d-i partman-auto/expert_recipe string                         \
                       device{ /dev/sda }                      \
                       vg_name{ vg0 }                          \
               .                                               \
-              3 512 512 swap                                  \
+              3 512 SWAPLVSIZE swap                           \
                       $lvmok{ }                               \
                       lv_name{ swap }                         \
                       in_vg{ vg0 }                            \
                       method{ swap } format{ }                \
                       .                                       \
-              3 10000 10000 xfs                               \
+              3 10000 ROOTLVSIZE xfs                          \
                       $lvmok{ }                               \
                       lv_name{ root }                         \
                       in_vg{ vg0 }                            \
