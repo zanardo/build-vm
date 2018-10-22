@@ -84,4 +84,5 @@ d-i preseed/late_command string echo ; \
 	echo "PermitRootLogin yes" >> /target/etc/ssh/sshd_config ; \
 	echo "UseDNS no" >> /target/etc/ssh/sshd_config ; \
 	mkdir -p /target/root/.ssh ; \
-	echo 'SSH_ADMIN_KEY' > /target/root/.ssh/authorized_keys ;
+	echo 'SSH_ADMIN_KEY' > /target/root/.ssh/authorized_keys ; \
+	lvremove -f vg0/deleteme ;
