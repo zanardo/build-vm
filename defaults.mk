@@ -36,6 +36,12 @@ VM_STORAGE_SIZE ?= 20
 # this project aims to build VMs templates.
 VM_DISK_CACHE_MODE ?= unsafe
 
+# Default LV size for root (minimum - 10GB)
+VM_LVM_ROOT_SIZE ?= 10000
+
+# Default LV size for swap.
+VM_LVM_SWAP_SIZE ?= 512
+
 ## Basic network
 
 # Bridge to attach VM network interface.

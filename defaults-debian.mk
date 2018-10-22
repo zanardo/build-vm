@@ -18,9 +18,3 @@ VM_DEBIAN_KEYBOARD ?= br
 
 # Default network interface name.
 VM_DEBIAN_INTERFACE ?= ens3
-
-# Default LV size for root (minimum - 10GB)
-VM_DEBIAN_LVM_ROOT_SIZE ?= 10000
-
-# Default LV size for swap.
-VM_DEBIAN_LVM_SWAP_SIZE ?= 512
